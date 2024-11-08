@@ -18,57 +18,65 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
+
+
 import { useSelection } from '@/hooks/use-selection';
 
+
+
 import axiosInstance from '../../../services/api';
+
 
 function noop(): void {
   // do nothing
 }
 
-export interface Customer {
+export interface CategoryProject {
   id: string;
-  avatar: string;
-  email: string;
-  role: string;
-  verified: boolean;
+  name: string;
+  description: string;
 }
 
-interface CustomersTableProps {
+interface CategoryProjectsTableProps {
   count?: number;
   page?: number;
-  rows?: Customer[];
+  rows?: CategoryProject[];
   rowsPerPage?: number;
+  onPageChange?: (event: unknown, newPage: number) => void;
 }
 
-export function CustomersTable({ count = 0, page = 0, rowsPerPage = 0 }: CustomersTableProps): React.JSX.Element {
-  const [rows, setRows] = useState<Customer[]>([]);
+export function CategoryProjectsTable({
+  count = 0,
+  page = 0,
+  rowsPerPage = 0,
+}: CategoryProjectsTableProps): React.JSX.Element {
+  const [rows, setRows] = useState<CategoryProject[]>([]);
   const [totalCount, setTotalCount] = useState(count);
 
-  // Fetch users from the API
+  // Fetch category projects from the API
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axiosInstance.get('/auth/users');
+        const response = await axiosInstance.get('/category-project/getAll'); // Replace with the correct endpoint
         console.log('response', response);
 
-        const userData = response.data.map((user: any) => ({
-          id: user.id.toString(),
-          email: user.email,
-          role: user.role,
-          verified: user.verified,
+        const categoryData = response.data.map((category: any) => ({
+          id: category.id.toString(),
+          name: category.name,
+          description: category.description,
         }));
-        setRows(userData);
-        setTotalCount(userData.length);
+
+        setRows(categoryData);
+        setTotalCount(categoryData.length);
       } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error('Error fetching category projects:', error);
       }
     };
     fetchData();
   }, []);
 
   // Memoize row IDs for the selection hook
-  const rowIds = React.useMemo(() => rows.map((customer) => customer.id), [rows]);
+  const rowIds = React.useMemo(() => rows.map((category) => category.id), [rows]);
 
   // Destructure selection functions from the hook
   const { selectAll, deselectAll, selectOne, deselectOne, selected } = useSelection(rowIds);
@@ -95,11 +103,11 @@ export function CustomersTable({ count = 0, page = 0, rowsPerPage = 0 }: Custome
                   }}
                 />
               </TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Role</TableCell>
-              <TableCell>Account Status</TableCell>
+              <TableCell>Category Name</TableCell>
+              <TableCell>Description</TableCell>
             </TableRow>
           </TableHead>
+
           <TableBody>
             {rows.map((row) => {
               const isSelected = selected?.has(row.id);
@@ -118,16 +126,8 @@ export function CustomersTable({ count = 0, page = 0, rowsPerPage = 0 }: Custome
                       }}
                     />
                   </TableCell>
-                  <TableCell>
-                    <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
-                      <Avatar src={row.avatar} />
-                      <Typography variant="subtitle2">{row.email}</Typography>
-                    </Stack>
-                  </TableCell>
-                  <TableCell>{row.role}</TableCell>
-                  <TableCell>
-                    {row.verified ? <CheckCircle sx={{ color: 'green' }} /> : <Cancel sx={{ color: 'red' }} />}
-                  </TableCell>{' '}
+                  <TableCell>{row.name}</TableCell>
+                  <TableCell>{row.description}</TableCell>
                 </TableRow>
               );
             })}
@@ -137,7 +137,7 @@ export function CustomersTable({ count = 0, page = 0, rowsPerPage = 0 }: Custome
       <Divider />
       <TablePagination
         component="div"
-        count={count}
+        count={totalCount}
         onPageChange={noop}
         onRowsPerPageChange={noop}
         page={page}

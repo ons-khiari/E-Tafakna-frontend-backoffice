@@ -26,49 +26,65 @@ function noop(): void {
   // do nothing
 }
 
-export interface Customer {
+export interface Project {
   id: string;
-  avatar: string;
-  email: string;
-  role: string;
-  verified: boolean;
+  title: string;
+  description: string;
+  price: number;
+  location: string;
+  createdAt: string;
+  updatedAt: string;
+  soldAt?: string | null;
+  status: string; // Available, Sold, etc.
+  postedById: number;
+  categoryId: number;
+  images: string[]; // Array of image URLs or paths
 }
 
-interface CustomersTableProps {
+interface ProjectsTableProps {
   count?: number;
   page?: number;
-  rows?: Customer[];
+  rows?: Project[];
   rowsPerPage?: number;
 }
 
-export function CustomersTable({ count = 0, page = 0, rowsPerPage = 0 }: CustomersTableProps): React.JSX.Element {
-  const [rows, setRows] = useState<Customer[]>([]);
+export function ProjectsTable({ count = 0, page = 0, rowsPerPage = 0 }: ProjectsTableProps): React.JSX.Element {
+  const [rows, setRows] = useState<Project[]>([]);
   const [totalCount, setTotalCount] = useState(count);
 
-  // Fetch users from the API
+  // Fetch projects from the API
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axiosInstance.get('/auth/users');
+        const response = await axiosInstance.get('/project/getAll'); // Replace with the correct endpoint
         console.log('response', response);
 
-        const userData = response.data.map((user: any) => ({
-          id: user.id.toString(),
-          email: user.email,
-          role: user.role,
-          verified: user.verified,
+        const projectData = response.data.map((project: any) => ({
+          id: project.id.toString(),
+          title: project.title,
+          description: project.description,
+          price: project.price,
+          location: project.location,
+          createdAt: project.createdAt,
+          updatedAt: project.updatedAt,
+          soldAt: project.soldAt || null,
+          status: project.status,
+          postedById: project.postedById,
+          categoryId: project.categoryId,
+          images: project.images,
         }));
-        setRows(userData);
-        setTotalCount(userData.length);
+
+        setRows(projectData);
+        setTotalCount(projectData.length);
       } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error('Error fetching projects:', error);
       }
     };
     fetchData();
   }, []);
 
   // Memoize row IDs for the selection hook
-  const rowIds = React.useMemo(() => rows.map((customer) => customer.id), [rows]);
+  const rowIds = React.useMemo(() => rows.map((project) => project.id), [rows]);
 
   // Destructure selection functions from the hook
   const { selectAll, deselectAll, selectOne, deselectOne, selected } = useSelection(rowIds);
@@ -95,11 +111,14 @@ export function CustomersTable({ count = 0, page = 0, rowsPerPage = 0 }: Custome
                   }}
                 />
               </TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Role</TableCell>
-              <TableCell>Account Status</TableCell>
+              <TableCell>Project Title</TableCell>
+              <TableCell>Description</TableCell>
+              <TableCell>Price</TableCell>
+              <TableCell>Location</TableCell>
+              <TableCell>Status</TableCell>
             </TableRow>
           </TableHead>
+
           <TableBody>
             {rows.map((row) => {
               const isSelected = selected?.has(row.id);
@@ -118,16 +137,17 @@ export function CustomersTable({ count = 0, page = 0, rowsPerPage = 0 }: Custome
                       }}
                     />
                   </TableCell>
+                  <TableCell>{row.title}</TableCell>
+                  <TableCell>{row.description}</TableCell>
+                  <TableCell>{row.price}</TableCell>
+                  <TableCell>{row.location}</TableCell>
                   <TableCell>
-                    <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
-                      <Avatar src={row.avatar} />
-                      <Typography variant="subtitle2">{row.email}</Typography>
-                    </Stack>
+                    {row.status === 'AVAILABLE' ? (
+                      <CheckCircle sx={{ color: 'green' }} />
+                    ) : (
+                      <Cancel sx={{ color: 'red' }} />
+                    )}
                   </TableCell>
-                  <TableCell>{row.role}</TableCell>
-                  <TableCell>
-                    {row.verified ? <CheckCircle sx={{ color: 'green' }} /> : <Cancel sx={{ color: 'red' }} />}
-                  </TableCell>{' '}
                 </TableRow>
               );
             })}
@@ -137,7 +157,7 @@ export function CustomersTable({ count = 0, page = 0, rowsPerPage = 0 }: Custome
       <Divider />
       <TablePagination
         component="div"
-        count={count}
+        count={totalCount}
         onPageChange={noop}
         onRowsPerPageChange={noop}
         page={page}

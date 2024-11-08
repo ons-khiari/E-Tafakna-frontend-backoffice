@@ -26,49 +26,47 @@ function noop(): void {
   // do nothing
 }
 
-export interface Customer {
+export interface Skill {
   id: string;
-  avatar: string;
-  email: string;
-  role: string;
-  verified: boolean;
+  name: string;
+  description: string;
 }
 
-interface CustomersTableProps {
+interface SkillsTableProps {
   count?: number;
   page?: number;
-  rows?: Customer[];
+  rows?: Skill[];
   rowsPerPage?: number;
 }
 
-export function CustomersTable({ count = 0, page = 0, rowsPerPage = 0 }: CustomersTableProps): React.JSX.Element {
-  const [rows, setRows] = useState<Customer[]>([]);
+export function SkillsTable({ count = 0, page = 0, rowsPerPage = 0 }: SkillsTableProps): React.JSX.Element {
+  const [rows, setRows] = useState<Skill[]>([]);
   const [totalCount, setTotalCount] = useState(count);
 
-  // Fetch users from the API
+  // Fetch skills from the API
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axiosInstance.get('/auth/users');
+        const response = await axiosInstance.get('/skills/getAll'); // Replace with the correct endpoint
         console.log('response', response);
 
-        const userData = response.data.map((user: any) => ({
-          id: user.id.toString(),
-          email: user.email,
-          role: user.role,
-          verified: user.verified,
+        const skillData = response.data.map((skill: any) => ({
+          id: skill.id.toString(),
+          name: skill.name,
+          description: skill.description,
         }));
-        setRows(userData);
-        setTotalCount(userData.length);
+
+        setRows(skillData);
+        setTotalCount(skillData.length);
       } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error('Error fetching skills:', error);
       }
     };
     fetchData();
   }, []);
 
   // Memoize row IDs for the selection hook
-  const rowIds = React.useMemo(() => rows.map((customer) => customer.id), [rows]);
+  const rowIds = React.useMemo(() => rows.map((skill) => skill.id), [rows]);
 
   // Destructure selection functions from the hook
   const { selectAll, deselectAll, selectOne, deselectOne, selected } = useSelection(rowIds);
@@ -95,11 +93,11 @@ export function CustomersTable({ count = 0, page = 0, rowsPerPage = 0 }: Custome
                   }}
                 />
               </TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Role</TableCell>
-              <TableCell>Account Status</TableCell>
+              <TableCell>Skill Name</TableCell>
+              <TableCell>Description</TableCell>
             </TableRow>
           </TableHead>
+
           <TableBody>
             {rows.map((row) => {
               const isSelected = selected?.has(row.id);
@@ -118,16 +116,8 @@ export function CustomersTable({ count = 0, page = 0, rowsPerPage = 0 }: Custome
                       }}
                     />
                   </TableCell>
-                  <TableCell>
-                    <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
-                      <Avatar src={row.avatar} />
-                      <Typography variant="subtitle2">{row.email}</Typography>
-                    </Stack>
-                  </TableCell>
-                  <TableCell>{row.role}</TableCell>
-                  <TableCell>
-                    {row.verified ? <CheckCircle sx={{ color: 'green' }} /> : <Cancel sx={{ color: 'red' }} />}
-                  </TableCell>{' '}
+                  <TableCell>{row.name}</TableCell>
+                  <TableCell>{row.description}</TableCell>
                 </TableRow>
               );
             })}
@@ -137,7 +127,7 @@ export function CustomersTable({ count = 0, page = 0, rowsPerPage = 0 }: Custome
       <Divider />
       <TablePagination
         component="div"
-        count={count}
+        count={totalCount}
         onPageChange={noop}
         onRowsPerPageChange={noop}
         page={page}

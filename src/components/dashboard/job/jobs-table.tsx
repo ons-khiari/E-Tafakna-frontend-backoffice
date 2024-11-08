@@ -26,49 +26,67 @@ function noop(): void {
   // do nothing
 }
 
-export interface Customer {
+export interface Job {
   id: string;
-  avatar: string;
-  email: string;
-  role: string;
-  verified: boolean;
+  title: string;
+  company: string;
+  location: string;
+  jobType: string;
+  experienceLevel: string;
+  qualifications: string;
+  description: string;
+  budgetmin: number;
+  budgetmax: number;
+  status: string; // jobStatus renamed to status for consistency
+  postedAt: string;
+  postedById: number;
 }
 
-interface CustomersTableProps {
+interface JobsTableProps {
   count?: number;
   page?: number;
-  rows?: Customer[];
+  rows?: Job[];
   rowsPerPage?: number;
 }
 
-export function CustomersTable({ count = 0, page = 0, rowsPerPage = 0 }: CustomersTableProps): React.JSX.Element {
-  const [rows, setRows] = useState<Customer[]>([]);
+export function JobsTable({ count = 0, page = 0, rowsPerPage = 0 }: JobsTableProps): React.JSX.Element {
+  const [rows, setRows] = useState<Job[]>([]);
   const [totalCount, setTotalCount] = useState(count);
 
-  // Fetch users from the API
+  // Fetch jobs from the API
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axiosInstance.get('/auth/users');
+        const response = await axiosInstance.get('/job/getAll'); // Update endpoint if needed
         console.log('response', response);
 
-        const userData = response.data.map((user: any) => ({
-          id: user.id.toString(),
-          email: user.email,
-          role: user.role,
-          verified: user.verified,
+        const jobData = response.data.map((job: any) => ({
+          id: job.id.toString(),
+          title: job.title,
+          company: job.Company, // Using 'Company' as per your example
+          location: job.location,
+          jobType: job.jobType,
+          experienceLevel: job.experienceLevel,
+          qualifications: job.Qualifications, // Added qualifications
+          description: job.description, // Added description
+          budgetmin: job.budgetmin, // Added budgetmin
+          budgetmax: job.budgetmax, // Added budgetmax
+          status: job.jobStatus, // Renamed to status
+          postedAt: job.postedAt,
+          postedById: job.postedById,
         }));
-        setRows(userData);
-        setTotalCount(userData.length);
+
+        setRows(jobData);
+        setTotalCount(jobData.length);
       } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error('Error fetching jobs:', error);
       }
     };
     fetchData();
   }, []);
 
   // Memoize row IDs for the selection hook
-  const rowIds = React.useMemo(() => rows.map((customer) => customer.id), [rows]);
+  const rowIds = React.useMemo(() => rows.map((job) => job.id), [rows]);
 
   // Destructure selection functions from the hook
   const { selectAll, deselectAll, selectOne, deselectOne, selected } = useSelection(rowIds);
@@ -95,11 +113,16 @@ export function CustomersTable({ count = 0, page = 0, rowsPerPage = 0 }: Custome
                   }}
                 />
               </TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Role</TableCell>
-              <TableCell>Account Status</TableCell>
+              <TableCell>Job Title</TableCell>
+              <TableCell>Company</TableCell>
+              <TableCell>Location</TableCell>
+              <TableCell>Job Type</TableCell> {/* New column */}
+              <TableCell>Experience Level</TableCell> {/* New column */}
+              <TableCell>Qualifications</TableCell> {/* New column */}
+              <TableCell>Job Status</TableCell>
             </TableRow>
           </TableHead>
+
           <TableBody>
             {rows.map((row) => {
               const isSelected = selected?.has(row.id);
@@ -118,16 +141,19 @@ export function CustomersTable({ count = 0, page = 0, rowsPerPage = 0 }: Custome
                       }}
                     />
                   </TableCell>
+                  <TableCell>{row.title}</TableCell>
+                  <TableCell>{row.company}</TableCell>
+                  <TableCell>{row.location}</TableCell>
+                  <TableCell>{row.jobType}</TableCell> {/* New data */}
+                  <TableCell>{row.experienceLevel}</TableCell> {/* New data */}
+                  <TableCell>{row.qualifications}</TableCell> {/* New data */}
                   <TableCell>
-                    <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
-                      <Avatar src={row.avatar} />
-                      <Typography variant="subtitle2">{row.email}</Typography>
-                    </Stack>
+                    {row.status === 'AVAILABLE' ? (
+                      <CheckCircle sx={{ color: 'green' }} />
+                    ) : (
+                      <Cancel sx={{ color: 'red' }} />
+                    )}
                   </TableCell>
-                  <TableCell>{row.role}</TableCell>
-                  <TableCell>
-                    {row.verified ? <CheckCircle sx={{ color: 'green' }} /> : <Cancel sx={{ color: 'red' }} />}
-                  </TableCell>{' '}
                 </TableRow>
               );
             })}
