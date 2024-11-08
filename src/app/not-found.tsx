@@ -1,59 +1,44 @@
-import Link from 'next/link';
-import Image from 'next/image';
-import { Title } from '@/components/ui/text';
-import { Button } from '@/components/ui/button';
-import { PiHouseLineBold } from 'react-icons/pi';
-import SocialItems from '@/components/ui/social-shares';
-import { siteConfig } from '@/config/site.config';
-import NotFoundImg from '@public/not-found.png';
+import * as React from 'react';
+import type { Metadata } from 'next';
+import RouterLink from 'next/link';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import { ArrowLeft as ArrowLeftIcon } from '@phosphor-icons/react/dist/ssr/ArrowLeft';
 
-export default function NotFound() {
+import { config } from '@/config';
+import { paths } from '@/paths';
+
+export const metadata = { title: `Not found | ${config.site.name}` } satisfies Metadata;
+
+export default function NotFound(): React.JSX.Element {
   return (
-    <div className="flex min-h-screen flex-col bg-[#F8FAFC]">
-      <div className="sticky top-0 z-40 flex justify-center py-5 backdrop-blur-lg lg:backdrop-blur-none xl:py-10">
-        <Link href="/">
-          <Image
-            src={siteConfig.logo}
-            alt={siteConfig.title}
-            className="dark:invert"
-            priority
+    <Box component="main" sx={{ alignItems: 'center', display: 'flex', justifyContent: 'center', minHeight: '100%' }}>
+      <Stack spacing={3} sx={{ alignItems: 'center', maxWidth: 'md' }}>
+        <Box>
+          <Box
+            component="img"
+            alt="Under development"
+            src="/assets/error-404.png"
+            sx={{ display: 'inline-block', height: 'auto', maxWidth: '100%', width: '400px' }}
           />
-        </Link>
-      </div>
-
-      <div className="flex grow items-center px-6 xl:px-10">
-        <div className="mx-auto text-center">
-          <Image
-            src={NotFoundImg}
-            alt="not found"
-            className="mx-auto mb-8 aspect-[360/326] max-w-[256px] xs:max-w-[370px] lg:mb-12 2xl:mb-16"
-          />
-          <Title
-            as="h1"
-            className="text-[22px] font-bold leading-normal text-gray-1000 lg:text-3xl"
-          >
-            Sorry, the page not found
-          </Title>
-          <p className="mt-3 text-sm leading-loose text-gray-500 lg:mt-6 lg:text-base lg:leading-loose">
-            We have been spending long hours in order to launch our new website.
-            Join our
-            <br className="hidden sm:inline-block" />
-            mailing list or follow us on Facebook for get latest update.
-          </p>
-          <Link href={'/'}>
-            <Button
-              as="span"
-              size="xl"
-              color="primary"
-              className="mt-8 h-12 px-4 xl:h-14 xl:px-6"
-            >
-              <PiHouseLineBold className="mr-1.5 text-lg" />
-              Back to home
-            </Button>
-          </Link>
-        </div>
-      </div>
-      <SocialItems />
-    </div>
+        </Box>
+        <Typography variant="h3" sx={{ textAlign: 'center' }}>
+          404: The page you are looking for isn&apos;t here
+        </Typography>
+        <Typography color="text.secondary" variant="body1" sx={{ textAlign: 'center' }}>
+          You either tried some shady route or you came here by mistake. Whichever it is, try using the navigation
+        </Typography>
+        <Button
+          component={RouterLink}
+          href={paths.home}
+          startIcon={<ArrowLeftIcon fontSize="var(--icon-fontSize-md)" />}
+          variant="contained"
+        >
+          Go back to home
+        </Button>
+      </Stack>
+    </Box>
   );
 }

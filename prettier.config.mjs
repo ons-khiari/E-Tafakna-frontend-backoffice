@@ -1,11 +1,34 @@
-/** @type {import("prettier").Config} */
+/** @type {import('prettier').Config} */
 const config = {
-  // printWith: 120,
+  endOfLine: 'lf',
+  semi: true,
   singleQuote: true,
-  // semi:false,
-  trailingComma: 'es5',
   tabWidth: 2,
-  useTabs: false,
-  plugins: ['prettier-plugin-tailwindcss'],
+  trailingComma: 'es5',
+  printWidth: 120,
+  importOrder: [
+    '^node:$',
+    '',
+    '^(react/(.*)$)|^(react$)',
+    '^(next/(.*)$)|^(next$)',
+    '<THIRD_PARTY_MODULES>',
+    '',
+    '^@/types$',
+    '^@/types/(.*)$',
+    '^@/config$',
+    '^@/config/(.*)$',
+    '^@/paths$',
+    '^@/data/(.*)$',
+    '^@/lib/(.*)$',
+    '^@/actions/(.*)$',
+    '^@/contexts/(.*)$',
+    '^@/hooks/(.*)$',
+    '^@/components/(.*)$',
+    '^@/styles/(.*)$',
+    '',
+    '^[./]',
+  ],
+  plugins: ['@ianvs/prettier-plugin-sort-imports'],
 };
+
 export default config;

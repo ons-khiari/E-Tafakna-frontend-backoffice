@@ -1,47 +1,90 @@
-# Isomorphic
+## [Devias Kit - React](https://material-kit-react.devias.io/)
 
-## Getting Started
+![license](https://img.shields.io/badge/license-MIT-blue.svg)
 
-System Requirements:
+[![Devias Kit - React](https://github.com/devias-io/material-kit-react/blob/main/public/assets/thumbnail.png)](https://material-kit-react.devias.io/)
 
-1. [Node.js 18.7^](https://nodejs.org/en) or later.
-2. [pnpm - package manager](https://pnpm.io/installation#using-npm) (recommended)
+> Free React Admin Dashboard made with [MUI's](https://mui.com) components, [React](https://reactjs.org) and of course [Next.js](https://github.com/vercel/next.js) to boost your app development process!
 
-First, install dependencies:
+## Pages 
 
-```bash
-npm i
-# or
-pnpm install
-# or
-npm run install
+- [Dashboard](https://material-kit-react.devias.io)
+- [Customers](https://material-kit-react.devias.io/dashboard/customers)
+- [Integrations](https://material-kit-react.devias.io/dashboard/integrations)
+- [Settings](https://material-kit-react.devias.io/dashboard/settings)
+- [Account](https://material-kit-react.devias.io/dashboard/account)
+- [Sign In](https://material-kit-react.devias.io/auth/sign-in)
+- [Sign Up](https://material-kit-react.devias.io/auth/sign-up)
+- [Reset Password](https://material-kit-react.devias.io/auth/reset-password)
+
+## Free Figma Community File
+
+- [Duplicate File](https://www.figma.com/file/b3L1Np4RYiicZAOMopHNkm/Devias-Dashboard-Design-Library-Kit)
+
+## Upgrade to PRO Version
+
+We also have a pro version of this product which bundles even more pages and components if you want
+to save more time and design efforts :)
+
+| Free Version (this one)  | [Devias Kit Pro](https://mui.com/store/items/devias-kit-pro/)                |
+| ------------------------ | :--------------------------------------------------------------------------- |
+| **8** Pages              | **80+** Pages                                                                |
+| ✔ Custom Authentication  | ✔ Authentication with **Amplify**, **Auth0**, **Firebase** and **Supabase**  |
+| -                        | ✔ Vite Version                                                               |
+| -                        | ✔ Dark Mode Support                                                          |
+| -                        | ✔ Complete Users Flows                                                       |
+| -                        | ✔ Premium Technical Support                                                  |
+
+## Quick start
+
+- Clone the repo: `git clone https://github.com/devias-io/material-kit-react.git`
+- Make sure your Node.js and npm versions are up to date
+- Install dependencies: `npm install` or `yarn`
+- Start the server: `npm run dev` or `yarn dev`
+- Open browser: `http://localhost:3000`
+
+## File Structure
+
+Within the download you'll find the following directories and files:
+
+```
+┌── .editorconfig
+├── .eslintrc.js
+├── .gitignore
+├── CHANGELOG.md
+├── LICENSE.md
+├── next-env.d.ts
+├── next.config.js
+├── package.json
+├── README.md
+├── tsconfig.json
+├── public
+└── src
+	├── components
+	├── contexts
+	├── hooks
+	├── lib
+	├── styles
+	├── types
+	└── app
+		├── layout.tsx
+		├── page.tsx
+		├── auth
+		└── dashboard
 ```
 
-Now, run the development server:
+## Resources
 
-```bash
-pnpm dev
-# or
-npm run dev
-```
+- More freebies like this one: https://devias.io
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Reporting Issues:
 
-You can start editing the page by modifying `app/(hydrogen)/page.tsx`. The page auto-updates as you edit the file. to learn more about this template please visit our [official documentation](https://isomorphic-doc.vercel.app/).
+- [Github Issues Page](https://github.com/devias-io/material-kit-react/issues)
 
-checkout our `package.json` scripts for more command.
+## License
 
-## Learn More.
+- Licensed under [MIT](https://github.com/devias-io/material-kit-react/blob/main/LICENSE.md)
 
-To learn more about Isomorphic, take a look at the following resources:
+## Contact Us
 
-- [Isomorphic Documentation](https://isomorphic-doc.vercel.app/) - learn about isomorphic.
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
-
-https://www.youtube.com/watch?v=MAtaT8BZEAo
+- Email Us: support@deviasio.zendesk.com
