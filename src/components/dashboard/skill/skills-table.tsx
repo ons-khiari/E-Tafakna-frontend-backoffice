@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Cancel, CheckCircle } from '@mui/icons-material';
+import { Cancel, CheckCircle, DeleteForever, ModeEdit } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
@@ -51,7 +51,7 @@ export function SkillsTable({ count = 0, page = 0, rowsPerPage = 0 }: SkillsTabl
 
         const skillData = response.data.map((skill: any) => ({
           id: skill.id.toString(),
-          name: skill.name
+          name: skill.name,
         }));
 
         setRows(skillData);
@@ -92,6 +92,7 @@ export function SkillsTable({ count = 0, page = 0, rowsPerPage = 0 }: SkillsTabl
                 />
               </TableCell>
               <TableCell>Skill Name</TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
 
@@ -114,6 +115,14 @@ export function SkillsTable({ count = 0, page = 0, rowsPerPage = 0 }: SkillsTabl
                     />
                   </TableCell>
                   <TableCell>{row.name}</TableCell>
+                  <TableCell>
+                    <IconButton sx={{ color: 'green' }}>
+                      <ModeEdit  />
+                    </IconButton>
+                    <IconButton sx={{ color: 'red' }}>
+                      <DeleteForever  />
+                    </IconButton>
+                  </TableCell>
                 </TableRow>
               );
             })}

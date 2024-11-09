@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Cancel, CheckCircle } from '@mui/icons-material';
+import { Cancel, CheckCircle, DeleteForever, ModeEdit } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
@@ -116,6 +116,7 @@ export function ProjectsTable({ count = 0, page = 0, rowsPerPage = 0 }: Projects
               <TableCell>Price</TableCell>
               <TableCell>Location</TableCell>
               <TableCell>Status</TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
 
@@ -147,6 +148,14 @@ export function ProjectsTable({ count = 0, page = 0, rowsPerPage = 0 }: Projects
                     ) : (
                       <Cancel sx={{ color: 'red' }} />
                     )}
+                  </TableCell>
+                  <TableCell>
+                    <IconButton sx={{ color: 'green' }}>
+                      <ModeEdit  />
+                    </IconButton>
+                    <IconButton sx={{ color: 'red' }}>
+                      <DeleteForever  />
+                    </IconButton>
                   </TableCell>
                 </TableRow>
               );

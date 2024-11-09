@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Cancel, CheckCircle } from '@mui/icons-material';
+import { Cancel, CheckCircle, DeleteForever, ModeEdit } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
@@ -98,6 +98,7 @@ export function CustomersTable({ count = 0, page = 0, rowsPerPage = 0 }: Custome
               <TableCell>Email</TableCell>
               <TableCell>Role</TableCell>
               <TableCell>Account Status</TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -128,6 +129,14 @@ export function CustomersTable({ count = 0, page = 0, rowsPerPage = 0 }: Custome
                   <TableCell>
                     {row.verified ? <CheckCircle sx={{ color: 'green' }} /> : <Cancel sx={{ color: 'red' }} />}
                   </TableCell>{' '}
+                  <TableCell>
+                    <IconButton sx={{ color: 'green' }}>
+                      <ModeEdit  />
+                    </IconButton>
+                    <IconButton sx={{ color: 'red' }}>
+                      <DeleteForever  />
+                    </IconButton>
+                  </TableCell>
                 </TableRow>
               );
             })}

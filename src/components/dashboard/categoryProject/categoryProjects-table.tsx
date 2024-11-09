@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Cancel, CheckCircle } from '@mui/icons-material';
+import { Cancel, CheckCircle, DeleteForever, ModeEdit } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
@@ -18,14 +18,9 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
-
-
 import { useSelection } from '@/hooks/use-selection';
 
-
-
 import axiosInstance from '../../../services/api';
-
 
 function noop(): void {
   // do nothing
@@ -105,6 +100,7 @@ export function CategoryProjectsTable({
               </TableCell>
               <TableCell>Category Name</TableCell>
               <TableCell>Description</TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
 
@@ -128,6 +124,14 @@ export function CategoryProjectsTable({
                   </TableCell>
                   <TableCell>{row.name}</TableCell>
                   <TableCell>{row.description}</TableCell>
+                  <TableCell>
+                    <IconButton sx={{ color: 'green' }}>
+                      <ModeEdit  />
+                    </IconButton>
+                    <IconButton sx={{ color: 'red' }}>
+                      <DeleteForever  />
+                    </IconButton>
+                  </TableCell>
                 </TableRow>
               );
             })}
