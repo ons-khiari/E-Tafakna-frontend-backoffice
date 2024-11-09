@@ -29,7 +29,6 @@ function noop(): void {
 export interface Skill {
   id: string;
   name: string;
-  description: string;
 }
 
 interface SkillsTableProps {
@@ -52,8 +51,7 @@ export function SkillsTable({ count = 0, page = 0, rowsPerPage = 0 }: SkillsTabl
 
         const skillData = response.data.map((skill: any) => ({
           id: skill.id.toString(),
-          name: skill.name,
-          description: skill.description,
+          name: skill.name
         }));
 
         setRows(skillData);
@@ -94,7 +92,6 @@ export function SkillsTable({ count = 0, page = 0, rowsPerPage = 0 }: SkillsTabl
                 />
               </TableCell>
               <TableCell>Skill Name</TableCell>
-              <TableCell>Description</TableCell>
             </TableRow>
           </TableHead>
 
@@ -117,7 +114,6 @@ export function SkillsTable({ count = 0, page = 0, rowsPerPage = 0 }: SkillsTabl
                     />
                   </TableCell>
                   <TableCell>{row.name}</TableCell>
-                  <TableCell>{row.description}</TableCell>
                 </TableRow>
               );
             })}

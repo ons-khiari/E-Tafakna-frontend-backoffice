@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useState } from 'react';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -11,8 +12,9 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import OutlinedInput from '@mui/material/OutlinedInput';
-import Select from '@mui/material/Select';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Grid from '@mui/material/Unstable_Grid2';
+import axios from 'axios';
 
 const states = [
   { value: 'alabama', label: 'Alabama' },
@@ -22,12 +24,72 @@ const states = [
 ] as const;
 
 export function AccountDetailsForm(): React.JSX.Element {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    phoneNumber: '',
+    address: '',
+    city: '',
+    state: '',
+    country: '',
+    avatar: '',
+    bio: '',
+  });
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }> | SelectChangeEvent<string>
+  ) => {
+    const { name, value } = e.target;
+
+    if (name) {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const token = localStorage.getItem('custom-auth-token');
+    if (!token) {
+      alert('No token found');
+      return;
+    }
+
+    try {
+      const response = await axios.patch(
+        'http://localhost:3216/api/profile/update',
+        {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          phoneNumber: formData.phoneNumber,
+          address: formData.address,
+          city: formData.city,
+          state: formData.state,
+          country: formData.country,
+          avatar: formData.avatar,
+          bio: formData.bio,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data) {
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      alert('Error updating profile');
+    }
+  };
+
   return (
-    <form
-      onSubmit={(event) => {
-        event.preventDefault();
-      }}
-    >
+    <form onSubmit={handleSubmit}>
       <Card>
         <CardHeader subheader="The information can be edited" title="Profile" />
         <Divider />
@@ -36,31 +98,43 @@ export function AccountDetailsForm(): React.JSX.Element {
             <Grid md={6} xs={12}>
               <FormControl fullWidth required>
                 <InputLabel>First name</InputLabel>
-                <OutlinedInput defaultValue="Sofia" label="First name" name="firstName" />
+                <OutlinedInput name="firstName" value={formData.firstName} onChange={handleChange} label="First name" />
               </FormControl>
             </Grid>
             <Grid md={6} xs={12}>
               <FormControl fullWidth required>
                 <InputLabel>Last name</InputLabel>
-                <OutlinedInput defaultValue="Rivers" label="Last name" name="lastName" />
-              </FormControl>
-            </Grid>
-            <Grid md={6} xs={12}>
-              <FormControl fullWidth required>
-                <InputLabel>Email address</InputLabel>
-                <OutlinedInput defaultValue="sofia@devias.io" label="Email address" name="email" />
+                <OutlinedInput name="lastName" value={formData.lastName} onChange={handleChange} label="Last name" />
               </FormControl>
             </Grid>
             <Grid md={6} xs={12}>
               <FormControl fullWidth>
                 <InputLabel>Phone number</InputLabel>
-                <OutlinedInput label="Phone number" name="phone" type="tel" />
+                <OutlinedInput
+                  name="phoneNumber"
+                  value={formData.phoneNumber}
+                  onChange={handleChange}
+                  label="Phone number"
+                  type="tel"
+                />
+              </FormControl>
+            </Grid>
+            <Grid md={6} xs={12}>
+              <FormControl fullWidth>
+                <InputLabel>Address</InputLabel>
+                <OutlinedInput name="address" value={formData.address} onChange={handleChange} label="Address" />
+              </FormControl>
+            </Grid>
+            <Grid md={6} xs={12}>
+              <FormControl fullWidth>
+                <InputLabel>City</InputLabel>
+                <OutlinedInput name="city" value={formData.city} onChange={handleChange} label="City" />
               </FormControl>
             </Grid>
             <Grid md={6} xs={12}>
               <FormControl fullWidth>
                 <InputLabel>State</InputLabel>
-                <Select defaultValue="New York" label="State" name="state" variant="outlined">
+                <Select name="state" value={formData.state} onChange={handleChange} label="State" variant="outlined">
                   {states.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
                       {option.label}
@@ -71,15 +145,23 @@ export function AccountDetailsForm(): React.JSX.Element {
             </Grid>
             <Grid md={6} xs={12}>
               <FormControl fullWidth>
-                <InputLabel>City</InputLabel>
-                <OutlinedInput label="City" />
+                <InputLabel>Country</InputLabel>
+                <OutlinedInput name="country" value={formData.country} onChange={handleChange} label="Country" />
+              </FormControl>
+            </Grid>
+            <Grid md={6} xs={12}>
+              <FormControl fullWidth>
+                <InputLabel>Bio</InputLabel>
+                <OutlinedInput name="bio" value={formData.bio} onChange={handleChange} label="Bio" />
               </FormControl>
             </Grid>
           </Grid>
         </CardContent>
         <Divider />
         <CardActions sx={{ justifyContent: 'flex-end' }}>
-          <Button variant="contained">Save details</Button>
+          <Button variant="contained" type="submit">
+            Save details
+          </Button>
         </CardActions>
       </Card>
     </form>

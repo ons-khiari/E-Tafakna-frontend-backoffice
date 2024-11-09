@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Badge from '@mui/material/Badge';
 import Box from '@mui/material/Box';
@@ -11,17 +12,42 @@ import { Bell as BellIcon } from '@phosphor-icons/react/dist/ssr/Bell';
 import { List as ListIcon } from '@phosphor-icons/react/dist/ssr/List';
 import { MagnifyingGlass as MagnifyingGlassIcon } from '@phosphor-icons/react/dist/ssr/MagnifyingGlass';
 import { Users as UsersIcon } from '@phosphor-icons/react/dist/ssr/Users';
+import axios from 'axios';
 
 import { usePopover } from '@/hooks/use-popover';
+import { useUser } from '@/hooks/use-user';
 
 import { MobileNav } from './mobile-nav';
 import { UserPopover } from './user-popover';
 
 export function MainNav(): React.JSX.Element {
   const [openNav, setOpenNav] = React.useState<boolean>(false);
-
   const userPopover = usePopover<HTMLDivElement>();
-
+  const { user, error, isLoading } = useUser();
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem('custom-auth-token');
+        if (token) {
+          const response = await axios.get('http://localhost:3216/api/profile/me', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (response.data && response.data.avatar) {
+            setAvatarUrl(response.data.avatar);
+          } else {
+            setAvatarUrl('');
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+        setAvatarUrl('');
+      }
+    };
+    fetchProfile();
+  }, []);
   return (
     <React.Fragment>
       <Box
@@ -70,7 +96,7 @@ export function MainNav(): React.JSX.Element {
             <Avatar
               onClick={userPopover.handleOpen}
               ref={userPopover.anchorRef}
-              src="/assets/avatar.png"
+              src={avatarUrl || ''}
               sx={{ cursor: 'pointer' }}
             />
           </Stack>
