@@ -13,7 +13,7 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps): React.JSX.Element {
   return (
-    <AuthGuard>
+    <AuthGuard requiredRole="ADMIN">
       <GlobalStyles
         styles={{
           body: {

@@ -1,8 +1,7 @@
 export interface User {
   id: string;
-  name?: string;
-  avatar?: string;
   email?: string;
-
+  role?: string;
+  verified?: boolean;
   [key: string]: unknown;
 }

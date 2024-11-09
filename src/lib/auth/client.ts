@@ -1,5 +1,8 @@
 'use client';
 
+import { useState } from 'react';
+import axios from 'axios';
+
 import type { User } from '@/types/user';
 
 function generateToken(): string {
@@ -8,13 +11,12 @@ function generateToken(): string {
   return Array.from(arr, (v) => v.toString(16).padStart(2, '0')).join('');
 }
 
-const user = {
-  id: 'USR-000',
-  avatar: '/assets/avatar.png',
-  firstName: 'Sofia',
-  lastName: 'Rivers',
-  email: 'sofia@devias.io',
-} satisfies User;
+// const user = {
+//   id: 'USR-000',
+//   email: 'sofia@devias.io',
+//   role: 'ADMIN',
+//   verified: true,
+// } satisfies User;
 
 export interface SignUpParams {
   firstName: string;
@@ -38,12 +40,8 @@ export interface ResetPasswordParams {
 
 class AuthClient {
   async signUp(_: SignUpParams): Promise<{ error?: string }> {
-    // Make API request
-
-    // We do not handle the API, so we'll just generate a token and store it in localStorage.
     const token = generateToken();
     localStorage.setItem('custom-auth-token', token);
-
     return {};
   }
 
@@ -51,20 +49,52 @@ class AuthClient {
     return { error: 'Social authentication not implemented' };
   }
 
-  async signInWithPassword(params: SignInWithPasswordParams): Promise<{ error?: string }> {
+  async signInWithPassword(params: SignInWithPasswordParams): Promise<{ error?: string; token?: string }> {
     const { email, password } = params;
 
-    // Make API request
+    try {
+      const response = await axios.post('http://localhost:3216/api/auth/login', {
+        email,
+        password,
+      });
+      const token = response.data.token;
+      if (!token) {
+        return { error: 'Authentication failed, no token received' };
+      }
+      const decodedToken = atob(token.split('.')[1]);
+      let parsedToken;
+      try {
+        parsedToken = JSON.parse(decodedToken);
+      } catch (error) {
+        console.error('Error parsing token:', error);
+        return { error: 'Error parsing token' };
+      }
+      const userId = parsedToken.id;
+      const userResponse = await axios.get(`http://localhost:3216/api/auth/user/${userId}`);
+      const userRole = userResponse.data.role;
 
-    // We do not handle the API, so we'll check if the credentials match with the hardcoded ones.
-    if (email !== 'sofia@devias.io' || password !== 'Secret1') {
-      return { error: 'Invalid credentials' };
+      if (!userRole) {
+        return { error: 'Role not found for the user' };
+      }
+
+      if (userRole !== 'ADMIN') {
+        console.log('[AuthClient]: User is not an ADMIN, redirecting');
+        return { error: 'Access denied, you should be an administrator to access the dashboard' };
+      }
+      const user = { ...userResponse.data, role: userRole };
+      localStorage.setItem('custom-auth-token', token);
+      localStorage.setItem('token-created-at', Date.now().toString());
+      localStorage.setItem('user-role', userRole);
+      localStorage.setItem('user-data', JSON.stringify(user));
+
+      return { token };
+    } catch (error: any) {
+      if (axios.isAxiosError(error) && error.response) {
+        return { error: error.response.data.message || 'Unknown error' };
+      } else {
+        return { error: 'Network error, please try again' };
+      }
     }
-
-    const token = generateToken();
-    localStorage.setItem('custom-auth-token', token);
-
-    return {};
   }
 
   async resetPassword(_: ResetPasswordParams): Promise<{ error?: string }> {
@@ -76,21 +106,34 @@ class AuthClient {
   }
 
   async getUser(): Promise<{ data?: User | null; error?: string }> {
-    // Make API request
-
-    // We do not handle the API, so just check if we have a token in localStorage.
     const token = localStorage.getItem('custom-auth-token');
 
     if (!token) {
       return { data: null };
     }
 
-    return { data: user };
+    const tokenCreatedAt = parseInt(localStorage.getItem('token-created-at') || '0');
+    if (Date.now() - tokenCreatedAt > 3600000) {
+      localStorage.removeItem('custom-auth-token');
+      localStorage.removeItem('user-data');
+      localStorage.removeItem('token-created-at');
+      localStorage.removeItem('user-role');
+      return { data: null };
+    }
+
+    const userData = localStorage.getItem('user-data');
+    if (userData) {
+      return { data: JSON.parse(userData) as User };
+    }
+
+    return { data: null };
   }
 
   async signOut(): Promise<{ error?: string }> {
     localStorage.removeItem('custom-auth-token');
-
+    localStorage.removeItem('token-created-at');
+    localStorage.removeItem('user-role');
+    localStorage.removeItem('user-data');
     return {};
   }
 }

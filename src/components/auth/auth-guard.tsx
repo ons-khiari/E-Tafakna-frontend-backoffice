@@ -10,9 +10,10 @@ import { useUser } from '@/hooks/use-user';
 
 export interface AuthGuardProps {
   children: React.ReactNode;
+  requiredRole?: string;
 }
 
-export function AuthGuard({ children }: AuthGuardProps): React.JSX.Element | null {
+export function AuthGuard({ children, requiredRole }: AuthGuardProps): React.JSX.Element | null {
   const router = useRouter();
   const { user, error, isLoading } = useUser();
   const [isChecking, setIsChecking] = React.useState<boolean>(true);
@@ -30,6 +31,14 @@ export function AuthGuard({ children }: AuthGuardProps): React.JSX.Element | nul
     if (!user) {
       logger.debug('[AuthGuard]: User is not logged in, redirecting to sign in');
       router.replace(paths.auth.signIn);
+      return;
+    }
+
+    if (requiredRole && user.role !== requiredRole) {
+      console.log(user.role);
+      console.log('required role', requiredRole);
+      logger.debug('[AuthGuard]: User does not have required role, redirecting to forbidden');
+      router.replace(paths.errors.notFound);
       return;
     }
 
