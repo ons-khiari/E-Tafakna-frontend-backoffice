@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Cancel, CheckCircle, DeleteForever, ModeEdit } from '@mui/icons-material';
-import { IconButton } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -157,10 +157,10 @@ export function JobsTable({ count = 0, page = 0, rowsPerPage = 0 }: JobsTablePro
                   </TableCell>
                   <TableCell>
                     <IconButton sx={{ color: 'green' }}>
-                      <ModeEdit  />
+                      <ModeEdit />
                     </IconButton>
                     <IconButton sx={{ color: 'red' }}>
-                      <DeleteForever  />
+                      <DeleteForever />
                     </IconButton>
                   </TableCell>
                 </TableRow>
